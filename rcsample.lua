@@ -72,31 +72,11 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
 
+-- Menubar is configured here
 require("menubar")
 menubar.cache_entries = true
 menubar.app_folders = { "/usr/share/applications/" }
-
-mytextclock:buttons(awful.util.table.join(
-                       awful.button({ }, 1, function() menubar.show() end)))
--- mbox = wibox({ height = 20, width = 1000 })
--- buts = awful.util.table.join(
---                      awful.button({ }, 1, function (c)
---                                               if not c:isvisible() then
---                                                   awful.tag.viewonly(c:tags()[1])
---                                               end
---                                               client.focus = c
---                                               c:raise()
---                                            end))
-
--- mbar = menubar(1, function(o) return o.name, 
---                      o.focused and beautiful.bg_focus or beautiful.bg_normal,
---                      nil, o.icon end)
-
--- mbox:geometry({x = 0, y = 20})
--- mbox.ontop = true
--- mbox.screen = 1
--- mbox.widgets = { mbar, layout = awful.widget.layout.horizontal.flex }
-
+-- End of menubar configuration
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -187,7 +167,7 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
-    awful.key({ modkey }, "s", function () scratch.drop("urxvt") end),
+   awful.key({ modkey }, "s", function () menubar.show() end),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),

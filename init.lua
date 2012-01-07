@@ -1,14 +1,15 @@
 -- Advanced menu replacement similar to dmenu
 -- @author Alexander Yakushev <yakushev.alex@gmail.com>
 -- @license WTFPL version 2 http://sam.zoy.org/wtfpl/COPYING
--- @version 0.0.9
+-- @version 0.1.0
 
 -- Grab environment we need
 local capi = { widget = widget,
                screen = screen,
                image = image,
                client = client,
-               wibox = wibox }
+               wibox = wibox,
+               screen = screen}
 local setmetatable = setmetatable
 local ipairs = ipairs
 local table = table
@@ -22,6 +23,7 @@ local string = string
 local mouse = mouse
 local math = math
 local keygrabber = keygrabber
+local print = print
 
 module("menubar")
 
@@ -43,6 +45,11 @@ common_args = { w = { layout = awful.widget.layout.horizontal.leftright },
                                          ["bg_resize"] = true
                                 } } }
 
+g = { width = nil,
+      height = 20,
+      x = nil,
+      y = nil }
+
 local function colortext(s, c)
    return "<span color='" .. c .. "'>" .. s .. "</span>"
 end
@@ -57,10 +64,26 @@ local function label(o)
    end
 end
 
+local function perform_action(o)
+   if not o or o.empty then
+      return true
+   end
+   if o.cat_id then
+      current_category = o.cat_id
+      local new_prompt = shownitems[current_item].name .. ": "
+      previous_item = current_item
+      current_item = 1
+      return true, "", new_prompt
+   elseif shownitems[current_item].cmdline then
+      awful.util.spawn(shownitems[current_item].cmdline)
+      hide()
+      return true
+   end
+end
+
 local function initialize()
-   instance.wibox = capi.wibox({ height = 20, width = 1000 })
+   instance.wibox = capi.wibox({})
    instance.widget = new()
-   instance.wibox:geometry({x = 0, y = 20})
    instance.wibox.ontop = true
    instance.prompt = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
    instance.wibox.widgets = { instance.prompt,
@@ -103,6 +126,16 @@ function show(screen)
    elseif not cache_entries then
       refresh()
    end
+
+   -- Set position and size
+   instance.wibox.screen = screen or mouse.screen
+   local scrgeom = capi.screen[instance.wibox.screen].workarea
+   local x = g.x or scrgeom.x
+   local y = g.y or scrgeom.y
+   instance.wibox.height = g.height or 20
+   instance.wibox.width = g.width or scrgeom.width
+   instance.wibox:geometry({x = x, y = y})
+
    current_item = 1
    current_category = nil
    instance.wibox.screen = screen or mouse.screen
@@ -112,10 +145,10 @@ function show(screen)
               hide,
               menulist_update,
               function(mod, key, comm)
-                 if key == "Left" then
+                 if key == "Left" or (mod.Control and key == "j") then
                     current_item = math.max(current_item - 1, 1)
                     return true
-                 elseif key == "Right" then
+                 elseif key == "Right" or (mod.Control and key == "k") then
                     current_item = current_item + 1
                     return true
                  elseif key == "BackSpace" then
@@ -131,17 +164,7 @@ function show(screen)
                        return true, nil, "Run app: "
                     end
                  elseif key == "Return" then
-                    if shownitems[current_item].cat_id then
-                       current_category = shownitems[current_item].cat_id
-                       local new_prompt = shownitems[current_item].name .. ": "
-                       previous_item = current_item
-                       current_item = 1
-                       return true, "", new_prompt
-                    elseif shownitems[current_item].cmdline then
-                       awful.util.spawn(shownitems[current_item].cmdline)
-                       hide()
-                       return true
-                    end
+                    return perform_action(shownitems[current_item])
                  end
                  return false
               end)
@@ -208,23 +231,20 @@ function menulist_update(query)
       end
       shownitems[current_item].focused = true
    else
-      table.insert(shownitems, { name = "&lt;no matches&gt;", icon = nil })
+      table.insert(shownitems, { name = "&lt;no matches&gt;", icon = nil,
+                                 empty = true })
    end
 
-   awful.widget.common.list_update(common_args.w, common_args.buttons, label,
-                                   common_args.data, common_args.widgets,
-                                   shownitems)
+   awful.widget.common.list_update(common_args.w, nil, label,
+                                   common_args.data,
+                                   common_args.widgets, shownitems)
 end
 
---- Create a new taglist widget.
--- @param screen The screen to draw tag list for.
--- @param label Label function to use.
--- @param buttons A table with buttons binding to set.
 function new()
    if app_folders then
       menu_gen.all_menu_dirs = app_folders
    end
-   refresh(cache_entries and awful.util.file_readable(menu_gen.output_filename))
+   refresh()
    -- Load categories icons and add IDs to them
    for i, v in ipairs(menu_gen.all_categories) do
       v.icon = (v.icon ~= nil) and capi.image(v.icon) or nil

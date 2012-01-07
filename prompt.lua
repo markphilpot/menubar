@@ -224,7 +224,7 @@ function run(args, textbox, exe_callback, completion_callback,
             local user_catched, new_command, new_prompt =
                keypressed_callback(mod, key, command)
             if user_catched then
-               if new_command then                  
+               if new_command then
                   command = new_command
                   update()
                end
