@@ -32,6 +32,7 @@ previous_item = nil
 current_category = nil
 shownitems = nil
 cache_entries = true
+show_categories = true
 
 instance = { prompt = nil,
              widget = nil,
@@ -194,14 +195,16 @@ function menulist_update(query)
    -- We add entries that match from the beginning to the table
    -- shownitems, and those that match in the middle to the table
    -- match_inside.
-   for i, v in ipairs(menu_gen.all_categories) do
-      v.focused = false
-      if not current_category and v.use then
-         if string.match(v.name, nocase(query)) then
-            if string.match(v.name, "^" .. nocase(query)) then
-               table.insert(shownitems, v)
-            else
-               table.insert(match_inside, v)
+   if show_categories then
+      for i, v in ipairs(menu_gen.all_categories) do
+         v.focused = false
+         if not current_category and v.use then
+            if string.match(v.name, nocase(query)) then
+               if string.match(v.name, "^" .. nocase(query)) then
+                  table.insert(shownitems, v)
+               else
+                  table.insert(match_inside, v)
+               end
             end
          end
       end

@@ -76,6 +76,7 @@ mytextclock = awful.widget.textclock({ align = "right" })
 require("menubar")
 menubar.cache_entries = true
 menubar.app_folders = { "/usr/share/applications/" }
+menubar.show_categories = true
 -- End of menubar configuration
 
 -- Create a systray
