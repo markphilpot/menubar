@@ -17,27 +17,35 @@ eof = "-- END OF FILE"
 
 all_categories = {
    { app_type = "AudioVideo", name = "Multimedia",
-     icon = utils.lookup_icon("applications-multimedia.png"), use = true },
+     icon_name = "applications-multimedia.png", use = true },
    { app_type = "Development", name = "Development",
-     icon = utils.lookup_icon("applications-development.png"), use = true },
+     icon_name = "applications-development.png", use = true },
    { app_type = "Education", name = "Education",
-     icon = utils.lookup_icon("applications-science.png"), use = false },
+     icon_name = "applications-science.png", use = false },
    { app_type = "Game", name = "Games",
-     icon = utils.lookup_icon("applications-games.png"), use = true },
+     icon_name = "applications-games.png", use = true },
    { app_type = "Graphics", name = "Graphics",
-     icon = utils.lookup_icon("applications-graphics.png"), use = true },
+     icon_name = "applications-graphics.png", use = true },
    { app_type = "Office", name = "Office",
-     icon = utils.lookup_icon("applications-office.png"), use = true },
+     icon_name = "applications-office.png", use = true },
    { app_type = "Network", name = "Internet",
-     icon = utils.lookup_icon("applications-internet.png"), use = true },
+     icon_name = "applications-internet.png", use = true },
    { app_type = "Settings", name = "Settings",
-     icon = utils.lookup_icon("applications-utilities.png"), use = false },
+     icon_name = "applications-utilities.png", use = false },
    { app_type = "System", name = "System Tools",
-     icon = utils.lookup_icon("applications-system.png"), use = true },
+     icon_name = "applications-system.png", use = true },
    { app_type = "Utility", name = "Accessories",
-     icon = utils.lookup_icon("applications-accessories.png"), use = true }
+     icon_name = "applications-accessories.png", use = true }
 }
 
+function lookup_category_icons()
+   for i, v in ipairs(all_categories) do
+      v.icon = utils.lookup_icon(v.icon_name)
+   end
+end
+
+lookup_category_icons()
+      
 local function get_category_and_number_by_type(app_type)
    for i, v in ipairs(all_categories) do
       if app_type == v.app_type then

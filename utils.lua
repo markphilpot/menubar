@@ -131,6 +131,8 @@ function parse(file, requested_icon_sizes)
       cmdline = cmdline:gsub('%%k', program.file)
       if program.icon_path then
          cmdline = cmdline:gsub('%%i', '--icon ' .. program.icon_path)
+      else
+         cmdline = cmdline:gsub('%%i', '')
       end
       if program.Terminal == "true" then
          cmdline = terminal .. ' -e ' .. cmdline

@@ -77,6 +77,7 @@ require("menubar")
 menubar.cache_entries = true
 menubar.app_folders = { "/usr/share/applications/" }
 menubar.show_categories = true
+--menubar.set_icon_theme("theme name")  -- Uncomment to set the desired icon theme
 -- End of menubar configuration
 
 -- Create a systray

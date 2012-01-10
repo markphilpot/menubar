@@ -257,4 +257,9 @@ function new()
    return common_args.w
 end
 
+function set_icon_theme(theme_name)
+   utils.icon_theme = theme_name
+   menu_gen.lookup_category_icons()
+end
+
 setmetatable(_M, { __call = function(_, ...) return new(...) end })
