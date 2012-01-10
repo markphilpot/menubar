@@ -100,6 +100,11 @@ function parse(file, requested_icon_sizes)
       end
    end
 
+   -- Don't show program if NoDisplay attribute is false
+   if program.NoDisplay == "false" then
+      program.show = false
+   end
+   
    -- Only show the program if there is not OnlyShowIn attribute
    -- or if it's equal to 'awesome'
    if program.OnlyShowIn ~= nil and program.OnlyShowIn ~= "awesome" then
