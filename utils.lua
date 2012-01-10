@@ -7,6 +7,7 @@
 local io = io
 local table = table
 local ipairs = ipairs
+local string = string
 
 module("menubar.utils")
 
@@ -101,7 +102,7 @@ function parse(file, requested_icon_sizes)
    end
 
    -- Don't show program if NoDisplay attribute is false
-   if program.NoDisplay == "false" then
+   if program.NoDisplay and string.lower(program.NoDisplay) == "true" then
       program.show = false
    end
    
