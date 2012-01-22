@@ -1,3 +1,7 @@
+## Note ##
+
+If you use the latest Awesome built from git then please use [this version](https://github.com/alexander-yakushev/menubar/tree/git-version).
+
 ## What ##
 
 Dmenu-like menu for Awesome WM.
