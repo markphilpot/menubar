@@ -2,7 +2,7 @@
 -- @author Julien Danjou &lt;julien@danjou.info&gt;
 -- @modified by Alex Y. <yakushev.alex@gmail.com>
 -- @copyright 2008 Julien Danjou
--- @release v3.4.11
+-- @release pre-v4.0
 ---------------------------------------------------------------------------
 
 -- Grab environment we need
@@ -12,7 +12,6 @@ local table = table
 local math = math
 local ipairs = ipairs
 local pcall = pcall
-local print = print
 local capi =
    {
    keygrabber = keygrabber,
@@ -187,13 +186,13 @@ function run(args, textbox, exe_callback, completion_callback,
    if not textbox or not exe_callback then
       return
    end
-   textbox.text = prompt_text_with_cursor{
-      text = text, text_color = inv_col, cursor_color = cur_col,
-      cursor_pos = cur_pos, cursor_ul = cur_ul, selectall = selectall,
-      font = font, prompt = prettyprompt }
+   textbox:set_markup(prompt_text_with_cursor{
+                         text = text, text_color = inv_col, cursor_color = cur_col,
+                         cursor_pos = cur_pos, cursor_ul = cur_ul, selectall = selectall,
+                         font = font, prompt = prettyprompt })
 
    local exec = function()
-                   textbox.text = ""
+                   textbox:set_markup("")
                    history_add(history_path, command)
                    capi.keygrabber.stop()
                    exe_callback(command)
@@ -204,10 +203,10 @@ function run(args, textbox, exe_callback, completion_callback,
       function (modifiers, key, event)
          -- Update textbox
          local function update()
-            textbox.text = prompt_text_with_cursor{
-               text = command, text_color = inv_col, cursor_color = cur_col,
-               cursor_pos = cur_pos, cursor_ul = cur_ul, selectall = selectall,
-               font = font, prompt = prettyprompt }
+            textbox:set_markup(prompt_text_with_cursor{
+                                  text = command, text_color = inv_col, cursor_color = cur_col,
+                                  cursor_pos = cur_pos, cursor_ul = cur_ul, selectall = selectall,
+                                  font = font, prompt = prettyprompt })
          end
 
          if event ~= "press" then
@@ -238,7 +237,7 @@ function run(args, textbox, exe_callback, completion_callback,
          end
          -- Get out cases
          if (mod.Control and (key == "c" or key == "g")) or (not mod.Control and key == "Escape") then
-            textbox.text = ""
+            textbox:set_markup("")
             if done_callback then done_callback() end
             return false
          elseif (mod.Control and (key == "j" or key == "m")) or (not mod.Control and key == "Return") or (not mod.Control and key == "KP_Enter") then
@@ -340,10 +339,10 @@ function run(args, textbox, exe_callback, completion_callback,
                      if ncomp == 1 then return true end
                      if ncomp == 2 then
                         command = command_before_comp
-                        textbox.text = prompt_text_with_cursor{
-                           text = command_before_comp, text_color = inv_col, cursor_color = cur_col,
-                           cursor_pos = cur_pos, cursor_ul = cur_ul, selectall = selectall,
-                           font = font, prompt = prettyprompt }
+                        textbox:set_markup(prompt_text_with_cursor{
+                                              text = command_before_comp, text_color = inv_col, cursor_color = cur_col,
+                                              cursor_pos = cur_pos, cursor_ul = cur_ul, selectall = selectall,
+                                              font = font, prompt = prettyprompt })
                         return true
                      end
 

@@ -4,11 +4,7 @@
 -- @version 0.1.0
 
 -- Grab environment we need
-local capi = { widget = widget,
-               screen = screen,
-               image = image,
-               client = client,
-               wibox = wibox,
+local capi = { client = client,
                screen = screen}
 local setmetatable = setmetatable
 local ipairs = ipairs
@@ -17,6 +13,7 @@ local theme = require("beautiful")
 local menu_gen = require("menubar.menu_gen")
 local prompt = require("menubar.prompt")
 local awful = require("awful")
+local common = require("awful.widget.common")
 local tonumber = tonumber
 local io = io
 local string = string
@@ -24,6 +21,7 @@ local mouse = mouse
 local math = math
 local keygrabber = keygrabber
 local print = print
+local wibox = require("wibox")
 
 module("menubar")
 
@@ -38,13 +36,8 @@ instance = { prompt = nil,
              widget = nil,
              wibox = nil }
 
-common_args = { w = { layout = awful.widget.layout.horizontal.leftright },
-                data = setmetatable({}, { __mode = 'kv' }),
-                widgets = { imagebox = { },
-                            textbox  = { ["margin"] = { ["left"]  = 5,
-                                                        ["right"] = 5},
-                                         ["bg_resize"] = true
-                                } } }
+common_args = { w = wibox.layout.fixed.horizontal(),
+                data = setmetatable({}, { __mode = 'kv' }) }
 
 g = { width = nil,
       height = 20,
@@ -82,14 +75,15 @@ local function perform_action(o)
    end
 end
 
-local function initialize()
-   instance.wibox = capi.wibox({})
+local function initialize(scr)
+   instance.wibox = wibox({screen = scr or mouse.screen})
    instance.widget = new()
    instance.wibox.ontop = true
-   instance.prompt = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
-   instance.wibox.widgets = { instance.prompt,
-                              instance.widget,
-                              layout = awful.widget.layout.horizontal.leftright }
+   instance.prompt = awful.widget.prompt()
+   local layout = wibox.layout.fixed.horizontal()
+   layout:add(instance.prompt)
+   layout:add(instance.widget)
+   instance.wibox:set_widget(layout)
 end
 
 function refresh(use_cache)
@@ -113,24 +107,24 @@ function refresh(use_cache)
          local icon_path = f:read("*line")
          local category = tonumber(f:read("*line"))
          table.insert(menu_entries, { name = name, cmdline = cmdline,
-                                      icon = icon_path ~= "" and capi.image(icon_path) or nil,
+                                      icon = icon_path ~= "" and icon_path or nil,
                                       category = category })
       end
    end
 end
 
-function show(screen)
+function show(scr)
    if not instance.wibox then
-      initialize()
-   elseif instance.wibox.screen then -- Menu already shown, exit
+      initialize(scr)
+   elseif instance.wibox.visible then -- Menu already shown, exit
       return
    elseif not cache_entries then
       refresh()
    end
 
    -- Set position and size
-   instance.wibox.screen = screen or mouse.screen
-   local scrgeom = capi.screen[instance.wibox.screen].workarea
+   instance.wibox.visible = true
+   local scrgeom = capi.screen[scr or 1].workarea
    local x = g.x or scrgeom.x
    local y = g.y or scrgeom.y
    instance.wibox.height = g.height or 20
@@ -139,7 +133,6 @@ function show(screen)
 
    current_item = 1
    current_category = nil
-   instance.wibox.screen = screen or mouse.screen
    menulist_update()
    prompt.run({ prompt = "Run app: " }, instance.prompt.widget, function(s) end, nil,
               awful.util.getdir("cache") .. "/history_menu", nil,
@@ -173,7 +166,7 @@ end
 
 function hide()
    keygrabber.stop()
-   instance.wibox.screen = nil
+   instance.wibox.visible = false
 end
 
 local function nocase (s)
@@ -184,8 +177,6 @@ local function nocase (s)
                    end)
    return s
 end -- nocase
-
-global_callback = nil
 
 function menulist_update(query)
    local query = query or ""
@@ -238,9 +229,9 @@ function menulist_update(query)
                                  empty = true })
    end
 
-   awful.widget.common.list_update(common_args.w, nil, label,
-                                   common_args.data,
-                                   common_args.widgets, shownitems)
+   common.list_update(common_args.w, nil, label,
+                      common_args.data,
+                      shownitems)
 end
 
 function new()
@@ -250,7 +241,7 @@ function new()
    refresh()
    -- Load categories icons and add IDs to them
    for i, v in ipairs(menu_gen.all_categories) do
-      v.icon = (v.icon ~= nil) and capi.image(v.icon) or nil
+--      v.icon = (v.icon ~= nil) and capi.image(v.icon) or nil
       v.cat_id = i
    end
    menulist_update()

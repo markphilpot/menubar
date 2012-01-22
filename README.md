@@ -1,3 +1,7 @@
+## Note ##
+
+This is the adjusted module for the latest git master version of Awesome.
+
 ## What ##
 
 Dmenu-like menu for Awesome WM.
