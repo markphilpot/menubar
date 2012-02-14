@@ -129,7 +129,6 @@ function show(screen)
    end
 
    -- Set position and size
-   instance.wibox.screen = screen or mouse.screen
    local scrgeom = capi.screen[instance.wibox.screen].workarea
    local x = g.x or scrgeom.x
    local y = g.y or scrgeom.y
@@ -169,6 +168,7 @@ function show(screen)
                  end
                  return false
               end)
+   instance.wibox.screen = screen or mouse.screen
 end
 
 function hide()
