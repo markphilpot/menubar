@@ -123,7 +123,6 @@ function show(scr)
    end
 
    -- Set position and size
-   instance.wibox.visible = true
    local scrgeom = capi.screen[scr or 1].workarea
    local x = g.x or scrgeom.x
    local y = g.y or scrgeom.y
@@ -162,6 +161,7 @@ function show(scr)
                  end
                  return false
               end)
+   instance.wibox.visible = true
 end
 
 function hide()
