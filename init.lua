@@ -129,7 +129,8 @@ function show(screen)
    end
 
    -- Set position and size
-   local scrgeom = capi.screen[instance.wibox.screen].workarea
+   local scr = screen or mouse.screen or 1
+   local scrgeom = capi.screen[scr].workarea
    local x = g.x or scrgeom.x
    local y = g.y or scrgeom.y
    instance.wibox.height = g.height or 20
@@ -138,7 +139,6 @@ function show(screen)
 
    current_item = 1
    current_category = nil
-   instance.wibox.screen = screen or mouse.screen
    menulist_update()
    prompt.run({ prompt = "Run app: " }, instance.prompt.widget, function(s) end, nil,
               awful.util.getdir("cache") .. "/history_menu", nil,
@@ -168,7 +168,7 @@ function show(screen)
                  end
                  return false
               end)
-   instance.wibox.screen = screen or mouse.screen
+   instance.wibox.screen = scr
 end
 
 function hide()
