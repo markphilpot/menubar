@@ -1,6 +1,6 @@
 ## Note ##
 
-If you use the latest Awesome built from git then please use [this version](https://github.com/alexander-yakushev/menubar/tree/git-version).
+If you use the latest Awesome built from git since 09.03.2012 then you already have Menubar. Press Modkey-P to see it.
 
 ## What ##
 
