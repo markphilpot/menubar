@@ -258,7 +258,11 @@ function new()
 end
 
 function set_icon_theme(theme_name)
-   utils.icon_theme = theme_name
+   if string.sub(theme_name, 1, 1) == '/' then
+      utils.icon_theme = theme_name
+   else
+      utils.icon_theme = '/usr/share/icons/' .. theme_name
+   end
    menu_gen.lookup_category_icons()
 end
 

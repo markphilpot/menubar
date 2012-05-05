@@ -52,7 +52,7 @@ function lookup_icon(icon_file)
       local icon_path = {}
       local icon_theme_paths = {}
       if icon_theme then
-         table.insert(icon_theme_paths, '/usr/share/icons/' .. icon_theme .. '/')
+         table.insert(icon_theme_paths, icon_theme .. '/')
          -- TODO also look in parent icon themes, as in freedesktop.org specification
       end
       table.insert(icon_theme_paths, '/usr/share/icons/hicolor/') -- fallback theme cf spec
