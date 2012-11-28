@@ -97,7 +97,9 @@ function parse(file, requested_icon_sizes)
    local program = { show = true, file = file }
    for line in io.lines(file) do
       for key, value in line:gmatch("(%w+)=(.+)") do
-         program[key] = value
+         if program[key] == nil then
+            program[key] = value
+         end
       end
    end
 
@@ -108,9 +110,9 @@ function parse(file, requested_icon_sizes)
    
    -- Only show the program if there is not OnlyShowIn attribute
    -- or if it's equal to 'awesome'
-   if program.OnlyShowIn ~= nil and program.OnlyShowIn ~= "awesome" then
-      program.show = false
-   end
+   --if program.OnlyShowIn ~= nil and program.OnlyShowIn ~= "awesome" then
+   --   program.show = false
+   --end
 
    -- Look up for a icon.
    if program.Icon then
